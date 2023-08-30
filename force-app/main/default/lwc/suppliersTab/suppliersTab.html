@@ -1,0 +1,22 @@
+<template>
+	<lightning-card title={title} icon-name="utility:groups">               
+		        
+        <c-suppliers-table 
+            account={account}
+            ongetsuppliers={handleGetSuppliers}
+            ongetallsuppliers={handleGetAllSuppliers}
+            >            
+        </c-suppliers-table>    
+
+        <template if:false={isBlankData}>
+            <div slot="footer">
+                <c-suppliers-map
+                    suppliers-list={suppliersList}
+                    account={account}
+                    >
+                </c-suppliers-map>
+            </div>
+        </template>          
+
+	</lightning-card>
+</template>
