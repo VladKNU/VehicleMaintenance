@@ -8,7 +8,6 @@ import STATUS_FIELD from "@salesforce/schema/Case.Status";
 
 export default class CaseRateAction extends LightningElement {
 
-    disabled = false;
     @api recordId;
 
     handleSubmit(e) {

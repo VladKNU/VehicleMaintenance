@@ -20,7 +20,7 @@ public class CaseTriggerHandler {
             Case oldCase = oldCases.get(caseToUpdate.Id);
 
             if(oldCase.Satisfaction_Rating__c != caseToUpdate.Satisfaction_Rating__c && oldCase.Status == 'Closed'){
-                Account currentAccount = recalculateAccountRating(accounts, caseToUpdate);
+                Account currentAccount = recalculateAccountRating(accounts.get(caseToUpdate.AccountId));
                 accountsToUpdate.add(currentAccount);
             }   
         }
@@ -36,7 +36,7 @@ public class CaseTriggerHandler {
 
         Map<Id, Account> accounts = new Map<Id, Account>([
             SELECT Id, Rating__c, (SELECT Id, Satisfaction_Rating__c FROM Cases WHERE Id NOT IN :oldCases.keySet() AND(Status = 'Closed')) 
-            FROM Account
+            FROM Account 
             WHERE Id IN :accountsToUpdate.keySet()
         ]);
 
@@ -59,8 +59,7 @@ public class CaseTriggerHandler {
         
     }
 
-    private static Account recalculateAccountRating(Map<Id, Account> accounts, Case caseToUpdate){
-        Account currentAccount = accounts.get(caseToUpdate.AccountId);                
+    private static Account recalculateAccountRating(Account currentAccount){            
 
         if(currentAccount.Cases != null && currentAccount.Cases.size() > 0){
             Decimal rate = 0;

@@ -14,7 +14,7 @@ public with sharing class SuppliersController {
         return null;
     }
 
-    @AuraEnabled(cacheable=true) // use cacheble=true only when reading data, NOT with a DML!
+    @AuraEnabled(cacheable=true)
     public static List<Supplier__c> getSuppliers(string billingCity){
 
         if(billingCity != null){

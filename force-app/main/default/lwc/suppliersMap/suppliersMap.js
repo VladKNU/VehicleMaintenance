@@ -57,7 +57,7 @@ export default class SuppliersMap extends LightningElement {
                         Latitude: element.Location__Latitude__s,
                         Longitude: element.Location__Longitude__s,
                     },
-                    icon: 'custom:custom26',
+                    //icon: 'custom:custom26',
                     title: element.Name,
                 },
             ];

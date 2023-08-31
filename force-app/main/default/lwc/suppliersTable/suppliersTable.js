@@ -1,4 +1,4 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 
 import getSuppliers from '@salesforce/apex/SuppliersController.getSuppliers';
 import { NavigationMixin } from 'lightning/navigation';
@@ -15,6 +15,7 @@ export default class SuppliersTable extends NavigationMixin(LightningElement) {
     totalPages;
     pageNumber = 1;    
     recordsToDisplay = [];
+    @track sortButtonLabel = 'Sort by distance';
     isSorted = false;
     isBlankData = true;    
 
@@ -63,7 +64,7 @@ export default class SuppliersTable extends NavigationMixin(LightningElement) {
         }
         
         this.sendComponentEvent("getsuppliers", "success", this.recordsToDisplay);
-        isSorted = false;
+        this.isSorted = false;
     }
 
     recordNameClick(event) {   
@@ -110,9 +111,13 @@ export default class SuppliersTable extends NavigationMixin(LightningElement) {
         if(!this.isSorted){
             let recs = this.recordsToDisplay;
             this.recordsToDisplay = [];
-            this.recordsToDisplay = sortByDistance(recs, this.activeAccount);
-            isSorted = true;
-        }        
+            this.recordsToDisplay = sortByDistance(recs, this.activeAccount);            
+            this.sortButtonLabel = 'Sort by default';
+            this.isSorted = true;
+        }else{
+            this.sortButtonLabel = 'Sort by distance';
+            this.paginationHelper();
+        }     
     }
 
     sendComponentEvent(eventName, status, message){
