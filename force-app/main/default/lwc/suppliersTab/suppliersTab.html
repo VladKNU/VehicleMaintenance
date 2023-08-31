@@ -8,6 +8,10 @@
             >            
         </c-suppliers-table>    
 
+        <template if:true={isSpinner}>
+            <lightning-spinner alternative-text="Loading.."></lightning-spinner>
+        </template>
+
         <template if:false={isBlankData}>
             <div slot="footer">
                 <c-suppliers-map

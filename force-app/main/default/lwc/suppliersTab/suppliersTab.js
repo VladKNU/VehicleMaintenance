@@ -6,10 +6,11 @@ import getAccountById from '@salesforce/apex/SuppliersController.getAccountById'
 export default class Suppliers extends LightningElement {
 
     @api recordId; 
-    suppliersList = [];
-    title;
     @track account;
+    title; 
+    suppliersList = [];       
     isBlankData = true;
+    isSpinner = true;
     
     connectedCallback(){
         this.getAccount();
@@ -28,6 +29,7 @@ export default class Suppliers extends LightningElement {
         this.suppliersList = event.detail.msg;
         if(event.detail.msg.length > 0)
             this.isBlankData = false;
+        this.isSpinner = false;
     }
 
     handleGetAllSuppliers(event){
