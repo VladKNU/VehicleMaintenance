@@ -13,8 +13,12 @@ public class CaseTriggerHandler {
     public static void updateAccountRatingAfterUpdate(List<Case> newCases, Map<Id,Case> oldCases){
         Set<Account> accountsToUpdate = new Set<Account>();
         Map<Id, Account> accounts = new Map<Id, Account>([
-            SELECT Id, Rating__c, (SELECT Satisfaction_Rating__c FROM Cases WHERE Status = 'Closed') FROM Account
+            SELECT Id, Rating__c, (SELECT Satisfaction_Rating__c FROM Cases WHERE Status = 'Closed') 
+            FROM Account
+            WHERE Id IN (SELECT AccountId FROM Case WHERE Id IN: newCases)
         ]);
+
+        System.debug(accounts);
 
         for(Case caseToUpdate : newCases){
             Case oldCase = oldCases.get(caseToUpdate.Id);
@@ -30,19 +34,15 @@ public class CaseTriggerHandler {
 
     public static void updateAccountRatingAfterDelete(Map<Id,Case> oldCases){
         
-        Map<Id, Account> accountsToUpdate = new Map<Id, Account>();
+        Set<Account> accountsToUpdate = new Set<Account>();
 
-        for(Case deletedCase : oldCases.values()){ accountsToUpdate.put(deletedCase.AccountId, deletedCase.Account);}
-
-        Map<Id, Account> accounts = new Map<Id, Account>([
-            SELECT Id, Rating__c, (SELECT Id, Satisfaction_Rating__c FROM Cases WHERE Id NOT IN :oldCases.keySet() AND(Status = 'Closed')) 
-            FROM Account 
-            WHERE Id IN :accountsToUpdate.keySet()
-        ]);
-
-        accountsToUpdate.clear();
-
-        for(Account currentAccount : accounts.values()){
+        for(Account currentAccount : [
+                SELECT Id, Rating__c, 
+                (SELECT Id, Satisfaction_Rating__c FROM Cases WHERE Id NOT IN :oldCases.keySet() AND(Status = 'Closed')) 
+                FROM Account 
+                WHERE Id IN (SELECT AccountId FROM Case WHERE Id IN: oldCases.values())
+                ])
+            {
             Decimal rate = 0;
             if(currentAccount.Cases.size() > 0){
                 for(Case currentCase : currentAccount.Cases){
@@ -52,10 +52,10 @@ public class CaseTriggerHandler {
             }
             else currentAccount.Rating__c = 0;               
 
-            accountsToUpdate.put(currentAccount.Id, currentAccount); 
+            accountsToUpdate.add(currentAccount); 
         }
         
-        update accountsToUpdate.values();
+        update new List<Account>(accountsToUpdate);
         
     }
 

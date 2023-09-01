@@ -4,11 +4,10 @@ public with sharing class SuppliersController {
     public static Account getAccountById(string account_id){
 
         if(account_id != null){
-            Account account = [
+            return [
                 SELECT Id, Name, BillingCity, BillingLatitude, BillingLongitude, BillingPostalCode, BillingStreet, BillingState, BillingCountry  
                 FROM Account 
                 WHERE Id =: account_id];
-            return account;
         }
 
         return null;
@@ -35,15 +34,11 @@ public with sharing class SuppliersController {
     @AuraEnabled(cacheable=true) 
     public static Supplier__c getSupplierById(string supplier_id){
 
-        if(supplier_id != null){
-            Supplier__c activeSupplier;
-
-            activeSupplier = [
+        if(supplier_id != null){           
+            return [
                 SELECT Id, Name, City__c, Location__Latitude__s, Location__Longitude__s 
                 FROM Supplier__c 
                 WHERE Id =: supplier_id][0];
-           
-            return activeSupplier;
             
         }
 
